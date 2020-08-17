@@ -1,0 +1,40 @@
+# This is for connection test purpose
+# Two porter pods on windows nodes with a porter service.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: node1-porter
+  namespace: demo
+  labels:
+    app: porter
+spec:
+    containers:
+    - name: porter
+      image: songtjiang/porter:windows
+      ports:
+      - containerPort: 80
+      env: 
+      - name: SERVE_PORT_80
+        value: This is a windows preview demo. Have a good time.
+      imagePullPolicy: IfNotPresent 
+    # This is for Openshift
+    securityContext:
+      seLinuxOptions: {}
+    nodeSelector:
+      kubernetes.io/os: windows
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: porter
+  namespace: demo
+  labels:
+    app: porter
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: porter
+  type: NodePort
